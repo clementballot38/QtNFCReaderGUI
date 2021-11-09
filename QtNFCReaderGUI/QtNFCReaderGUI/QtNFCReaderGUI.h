@@ -1,13 +1,9 @@
 #pragma once
 
-
 #include <QtWidgets/QMainWindow>
 #include "ui_QtNFCReaderGUI.h"
-#include "lib/MfErrNo.h"
-#include "lib/ODALID.h"
-#if _DEBUG
-#include <qdebug.h>
-#endif
+
+#include "NFCManager.h"
 
 
 
@@ -20,10 +16,22 @@ public:
 
 private:
     Ui::QtNFCReaderGUIClass ui;
-    ReaderName MonLecteur;
-    //char pszHost[] = "192.168.1.4";
+    NFCManager* manager;
+
+    // displayed screen management
+    enum Screen {
+        CONNECT,
+        DATA
+    };
+    void setScreen(QtNFCReaderGUI::Screen val);
+
+
+    // these functions shows various dialogs
+    void showErrorDialog(std::string title, std::string msg);
+    void showAlertDialog(std::string title, std::string msg);
 
 
 private slots:
     void on_connect_clicked();
+    void on_disconnect_clicked();
 };
