@@ -21,10 +21,12 @@ private:
     // displayed screen management
     enum Screen {
         CONNECT,
-        DATA
+        DATA,
+        LOADING
     };
     void setScreen(QtNFCReaderGUI::Screen val);
 
+    void updateUI();
 
     // these functions shows various dialogs
     void showErrorDialog(std::string title, std::string msg);
@@ -33,5 +35,9 @@ private:
 
 private slots:
     void on_connect_clicked();
+    void on_save_clicked();
+    void on_load_clicked();
+    void on_increment_clicked();
+    void on_decrement_clicked();
     void on_disconnect_clicked();
 };
