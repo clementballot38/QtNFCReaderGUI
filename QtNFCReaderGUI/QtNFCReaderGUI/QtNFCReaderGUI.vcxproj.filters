@@ -40,26 +40,25 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NFC.cpp">
+    <ClCompile Include="NFCManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="lib\libODALID_Education.a" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClInclude Include="NFCManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="lib\MfErrNo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="lib\ODALID.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NFC.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\ODALID_Education.dll" />
-    <None Include="ODALID_Education.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\libODALID_Education.a" />
   </ItemGroup>
 </Project>
