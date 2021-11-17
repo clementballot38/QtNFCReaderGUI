@@ -2,7 +2,7 @@
 
 
 
-
+// constructor
 QtNFCReaderGUI::QtNFCReaderGUI(QWidget* parent)
     : QMainWindow(parent)
 {
@@ -13,6 +13,7 @@ QtNFCReaderGUI::QtNFCReaderGUI(QWidget* parent)
 
 
 
+// called when the 'save' button is clicked
 void QtNFCReaderGUI::on_save_clicked()
 {
     if (this->manager->save(this->ui.first_name->text().toStdString(), this->ui.last_name->text().toStdString()))
@@ -21,8 +22,7 @@ void QtNFCReaderGUI::on_save_clicked()
         this->showErrorDialog("Error", "Cannot save data to card");
 }
 
-
-
+// called when the 'load' button is clicked
 void QtNFCReaderGUI::on_load_clicked()
 {
     this->setScreen(LOADING);
@@ -33,8 +33,7 @@ void QtNFCReaderGUI::on_load_clicked()
     this->setScreen(DATA);
 }
 
-
-
+// called when the 'increment' button is clicked
 void QtNFCReaderGUI::on_increment_clicked()
 {
     this->setScreen(LOADING);
@@ -45,6 +44,7 @@ void QtNFCReaderGUI::on_increment_clicked()
     this->setScreen(DATA);
 }
 
+// called when the 'decrement' button is clicked
 void QtNFCReaderGUI::on_decrement_clicked()
 {
     this->setScreen(LOADING);
@@ -55,8 +55,7 @@ void QtNFCReaderGUI::on_decrement_clicked()
     this->setScreen(DATA);
 }
 
-
-
+// called when the 'connect' button is clicked
 void QtNFCReaderGUI::on_connect_clicked()
 {
     this->setScreen(LOADING);
@@ -72,6 +71,7 @@ void QtNFCReaderGUI::on_connect_clicked()
     }
 }
 
+// called when the 'disconnect' button is clicked
 void QtNFCReaderGUI::on_disconnect_clicked()
 {
     this->setScreen(CONNECT);
@@ -79,6 +79,7 @@ void QtNFCReaderGUI::on_disconnect_clicked()
 
 
 
+// changes the displayed layout based on the required screen to be displayed
 void QtNFCReaderGUI::setScreen(QtNFCReaderGUI::Screen val)
 {
     switch (val)
@@ -103,6 +104,7 @@ void QtNFCReaderGUI::setScreen(QtNFCReaderGUI::Screen val)
 
 
 
+// updates the component with the values stored by the NFC manager
 void QtNFCReaderGUI::updateUI()
 {
     this->ui.first_name->setText(QString::fromStdString(this->manager->getFirstName()));
@@ -120,7 +122,6 @@ void QtNFCReaderGUI::showErrorDialog(std::string title, std::string msg)
     QMessageBox box;
     box.critical(this, QString::fromStdString(title), QString::fromStdString(msg), QMessageBox::StandardButton::Close);
 }
-
 void QtNFCReaderGUI::showAlertDialog(std::string title, std::string msg)
 {
     QMessageBox box;

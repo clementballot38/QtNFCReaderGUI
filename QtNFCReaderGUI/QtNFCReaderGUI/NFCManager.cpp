@@ -2,7 +2,7 @@
 
 
 
-
+// constructor
 NFCManager::NFCManager(QMainWindow* _parent)
     : parent(_parent)
 {
@@ -20,9 +20,9 @@ bool NFCManager::connect()
     this->nfc_reader.device = 0;
 
     // start reading
-    int16_t status = OpenCOM(&this->nfc_reader);
+    this->status = OpenCOM(&this->nfc_reader);
 
-    if (status == MI_OK)
+    if (this->status == MI_OK)
     {
         // turn RF power on
         RF_Power_Control(&this->nfc_reader, TRUE, 0);
@@ -55,37 +55,33 @@ bool NFCManager::connect()
 * Function to save data to the card
 */
 bool NFCManager::save(std::string fname, std::string lname) {
-    // QString Nom = this->ui.nom->toPlainText();
-     //QString Prenom = this->ui.prenom->toPlainText();
     uint8_t atq[2];
     uint8_t sak[1];
     uint8_t uid[12];
-    status = ISO14443_3_A_PollCard(&this->nfc_reader, atq, sak, uid, &this->uid_len);
 
-    if (status == MI_OK)
+    // connect to the card
+    this->status = ISO14443_3_A_PollCard(&this->nfc_reader, atq, sak, uid, &this->uid_len);
+
+    if (this->status == MI_OK)
     {
+        // convert strings to char arrays
         QByteArray fname_array = QString::fromStdString(fname).toLocal8Bit();
         QByteArray lname_array = QString::fromStdString(lname).toLocal8Bit();
 
-        status = Mf_Classic_Write_Block(&this->nfc_reader, TRUE, 9, (unsigned char*)strdup(fname_array.constData()), Auth_KeyB, 2);  // prenom
-        if (status == MI_OK)
+        // try to save values on the card
+        int fname_status = Mf_Classic_Write_Block(&this->nfc_reader, TRUE, 9, (unsigned char*)strdup(fname_array.constData()), Auth_KeyB, 2),
+            lname_status = Mf_Classic_Write_Block(&this->nfc_reader, TRUE, 10, (unsigned char*)strdup(lname_array.constData()), Auth_KeyB, 2);
+        
+        // check the final status
+        this->status = (fname_status == MI_OK && lname_status == MI_OK) ? MI_OK : MI_WRITEERR;
+
+        if (this->status == MI_OK)
         {
+            // save the values locally
             this->first_name = fname;
-            status = Mf_Classic_Write_Block(&this->nfc_reader, TRUE, 10, (unsigned char*)strdup(lname_array.constData()), Auth_KeyB, 2);  // nom
-            if (status == MI_OK)
-            {
-                this->last_name = lname;
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            this->last_name = lname;
         }
-        else
-        {
-            return false;
-        }
+        return this->status == MI_OK;
     }
     else
     {
@@ -104,37 +100,28 @@ bool NFCManager::load()
     uint8_t sak[1];
     uint8_t uid[12];
 
-    status = ISO14443_3_A_PollCard(&this->nfc_reader, atq, sak, uid, &uid_len);
+    // connect to the card
+    this->status = ISO14443_3_A_PollCard(&this->nfc_reader, atq, sak, uid, &uid_len);
 
-    if (status == MI_OK)
+    if (this->status == MI_OK)
     {
-        uint8_t lname_array[16];
-        status = Mf_Classic_Read_Block(&this->nfc_reader, TRUE, 10, lname_array, Auth_KeyA, 2);
-        if (status == MI_OK)
-        {
-            this->last_name = this->arrayToString(lname_array, 16);
-            
-            uint8_t fname_array[16];
-            status = Mf_Classic_Read_Block(&this->nfc_reader, TRUE, 9, fname_array, Auth_KeyA, 2);
-            if (status == MI_OK)
-            {
-                this->first_name = this->arrayToString(fname_array, 16);
+        // try to read datas from the card
+        uint8_t lname_array[16], fname_array[16], counter_array[16];
+        int lname_status = Mf_Classic_Read_Block(&this->nfc_reader, TRUE, 10, lname_array, Auth_KeyA, 2),
+            fname_status = Mf_Classic_Read_Block(&this->nfc_reader, TRUE, 9, fname_array, Auth_KeyA, 2),
+            count_status = Mf_Classic_Read_Block(&this->nfc_reader, TRUE, 14, counter_array, Auth_KeyB, 3);
 
-                uint8_t counter_array[16];
-                status = Mf_Classic_Read_Block(&this->nfc_reader, TRUE, 14, counter_array, Auth_KeyB, 3);
-                if (status == MI_OK)
-                {
-                    this->count_val = counter_array[0];
-                    return true;
-                }
-                else
-                    return false;
-            }
-            else
-                return false;
+        // check the final status
+        this->status = (fname_status == MI_OK && lname_status == MI_OK && count_status == MI_OK) ? MI_OK : MI_READERR;
+
+        if (this->status == MI_OK)
+        {
+            // save the values locally
+            this->last_name = this->arrayToString(lname_array, 16);
+            this->first_name = this->arrayToString(fname_array, 16);
+            this->count_val = counter_array[0];
         }
-        else
-            return false;
+        return this->status == MI_OK;
     }
     else
         return false;
@@ -143,48 +130,29 @@ bool NFCManager::load()
 
 
 /*
-* Functions to increment and decrement a value
+* Function to increment the counter
 */
 bool NFCManager::increment(uint inc_val)
 {
-    status = Mf_Classic_Increment_Value(&this->nfc_reader, TRUE, 14, inc_val, 13, Auth_KeyB, 3);
-    if (status == MI_OK)
-    {
-        status = Mf_Classic_Restore_Value(&this->nfc_reader, TRUE, 13, 14, Auth_KeyB, 3);
-        if (status == MI_OK)
-        {
-            status = Mf_Classic_Read_Value(&this->nfc_reader, TRUE, 14, &this->count_val, Auth_KeyB, 3);
-            if (status == MI_OK)
-                return true;
-            else
-                return false;
-        }
-        else
-            return false;
-    }
-    else
-        return false;
+    int inc_status = Mf_Classic_Increment_Value(&this->nfc_reader, TRUE, 14, inc_val, 13, Auth_KeyB, 3),
+        res_status = Mf_Classic_Restore_Value(&this->nfc_reader, TRUE, 13, 14, Auth_KeyB, 3),
+        rea_status = Mf_Classic_Read_Value(&this->nfc_reader, TRUE, 14, &this->count_val, Auth_KeyB, 3);
+    this->status = (inc_status == MI_OK && res_status == MI_OK && rea_status == MI_OK) ? MI_OK : MI_INCRERR;
+    return this->status == MI_OK;
 }
 
+
+
+/*
+* Function to decrement the counter
+*/
 bool NFCManager::decrement(uint dec_val)
 {
-    status = Mf_Classic_Decrement_Value(&this->nfc_reader, TRUE, 14, dec_val, 13, Auth_KeyB, 3);
-    if (status == MI_OK)
-    {
-        status = Mf_Classic_Restore_Value(&this->nfc_reader, TRUE, 13, 14, Auth_KeyB, 3);
-        if (status == MI_OK)
-        {
-            status = Mf_Classic_Read_Value(&this->nfc_reader, TRUE, 14, &this->count_val, Auth_KeyB, 3);
-            if (status == MI_OK)
-                return true;
-            else
-                return false;
-        }
-        else
-            return false;
-    }
-    else
-        return false;
+    int dec_status = Mf_Classic_Decrement_Value(&this->nfc_reader, TRUE, 14, dec_val, 13, Auth_KeyB, 3),
+        res_status = Mf_Classic_Restore_Value(&this->nfc_reader, TRUE, 13, 14, Auth_KeyB, 3),
+        rea_status = Mf_Classic_Read_Value(&this->nfc_reader, TRUE, 14, &this->count_val, Auth_KeyB, 3);
+    this->status = (dec_status == MI_OK && res_status == MI_OK && rea_status == MI_OK) ? MI_OK : MI_DECRERR;
+    return this->status == MI_OK;
 }
 
 
@@ -197,11 +165,8 @@ std::string NFCManager::arrayToString(uint8_t* arr, uint len)
 {
     std::string temp = "";
     for (uint i = 0; i < len; i++)
-    {
-        if(arr[i] >= 65 && arr[i] <= 122)
+        if ((arr[i] >= 'a' && arr[i] <= 'z') || (arr[i] >= 'A' && arr[i] <= 'Z') || arr[i] == '-')
             temp += arr[i];
-    }
-        
     return temp;
 }
 
@@ -214,12 +179,10 @@ std::string NFCManager::getFirstName()
 {
     return this->first_name;
 }
-
 std::string NFCManager::getLastName()
 {
     return this->last_name;
 }
-
 std::string NFCManager::getCounterValue()
 {
     return std::to_string(this->count_val);

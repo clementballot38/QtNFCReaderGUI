@@ -1,3 +1,32 @@
+/*
+* NFCManager
+* ----------
+* 
+* This class handles the management of a NFC reader : connect,
+* read, write, incrementing & decremeting.
+* 
+* Usage :
+* To use this class, add the following code :
+* NFCManager manager = new NFCManager(<main window>);
+* manager.<function>();
+* 
+* Data scheme :
+* Data on the NFC tag are stored as following :
+*	+------------+--------+-------+
+*	|    name    | sector | block |
+*	+------------+--------+-------+
+*	| fisrt name |   2    |   9   |
+*	+------------+--------+-------+
+*	| last name  |   2    |  10   |
+*	+------------+--------+-------+
+*	|  counter   |   3    |  14   |
+*	+------------+--------+-------+
+*/
+
+
+
+
+
 #pragma once
 #include <QtWidgets/QMainWindow>
 #include <QMessageBox>
@@ -11,22 +40,25 @@
 class NFCManager
 {
 public :
+	// constructor
 	NFCManager(QMainWindow* _parent);
-	bool connect();
-	bool save(std::string fname, std::string lname);
-	bool load();
-	bool increment(uint inc_val);
-	bool decrement(uint dec_val);
+	
+	bool connect();	// attempt to connect to the reader
+	bool load();	// load data from the card
+	bool save(std::string fname, std::string lname);	// write data to the card
+	bool increment(uint inc_val);	// increment the counter
+	bool decrement(uint dec_val);	// decrement the counter
 
-	std::string getFirstName();
-	std::string getLastName();
-	std::string getCounterValue();
+	std::string getFirstName();		// get the first name
+	std::string getLastName();		// get the last name
+	std::string getCounterValue();	// get the counter value
 
 
 private:
-	QMainWindow* parent;
-	ReaderName nfc_reader;
+	QMainWindow* parent;	// attached window
+	ReaderName nfc_reader;	// NFC reader
 
+	// converts a char array to string
 	std::string arrayToString(uint8_t* arr, uint len);
 
 	// keys
@@ -38,14 +70,12 @@ private:
 	// UID length
 	uint16_t uid_len = 12;
 
-
 	// NFC reader infos
 	char version[30];
 	uint8_t serial[4] = { 0, 0, 0, 0 };
 	int status = MI_OK;
 
-
-	// fetched infos
+	// stored values
 	std::string first_name;
 	std::string last_name;
 	uint32_t count_val = 1;

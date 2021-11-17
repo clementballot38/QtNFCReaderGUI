@@ -438,7 +438,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string>QtNFCReaderGUI</string>
+   <string>NFCReader - GUI</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow {
@@ -1095,7 +1095,7 @@ font-size: 24px;
      <property name="text">
       <string>Developped by Clément BALLOT
 
-Version 0.2</string>
+Version 1.0</string>
      </property>
      <property name="scaledContents">
       <bool>false</bool>

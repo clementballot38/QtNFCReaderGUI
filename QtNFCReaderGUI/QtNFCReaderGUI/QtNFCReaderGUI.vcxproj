@@ -93,16 +93,15 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="lib\libODALID_Education.a" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="lib\MfErrNo.h" />
     <ClInclude Include="lib\ODALID.h" />
     <ClInclude Include="NFCManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\ODALID_Education.dll" />
-    <None Include="ODALID_Education.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\libODALID_Education.a" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
