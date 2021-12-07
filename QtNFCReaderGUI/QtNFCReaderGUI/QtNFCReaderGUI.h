@@ -40,8 +40,9 @@ private:
     };
     void setScreen(QtNFCReaderGUI::Screen val);
 
-    // update all components
-    void updateUI();
+    
+    void updateUI();                    // update all components
+    void setStatus(std::string text);   // set the status text
 
     // these functions shows various dialogs
     void showErrorDialog(std::string title, std::string msg);
@@ -56,4 +57,8 @@ private slots:
     void on_increment_clicked();
     void on_decrement_clicked();
     void on_disconnect_clicked();
+
+    // signal to handle text inputs changes
+    void on_first_name_textEdited();
+    void on_last_name_textEdited();
 };

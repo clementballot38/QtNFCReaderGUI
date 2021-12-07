@@ -44,10 +44,12 @@ public :
 	NFCManager(QMainWindow* _parent);
 	
 	bool connect();	// attempt to connect to the reader
-	bool load();	// load data from the card
-	bool save(std::string fname, std::string lname);	// write data to the card
+	bool load();	// load data from the tag
+	bool save(std::string fname, std::string lname);	// write data to the tag
 	bool increment(uint inc_val);	// increment the counter
 	bool decrement(uint dec_val);	// decrement the counter
+
+	bool isConnected();	// get connexion status
 
 	std::string getFirstName();		// get the first name
 	std::string getLastName();		// get the last name
@@ -57,6 +59,8 @@ public :
 private:
 	QMainWindow* parent;	// attached window
 	ReaderName nfc_reader;	// NFC reader
+
+	void updateConnectionStatus();	// update the connexion status based on the current status
 
 	// converts a char array to string
 	std::string arrayToString(uint8_t* arr, uint len);
@@ -79,5 +83,6 @@ private:
 	std::string first_name;
 	std::string last_name;
 	uint32_t count_val = 1;
+	bool connected = false;
 };
 

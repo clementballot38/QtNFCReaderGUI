@@ -9,6 +9,8 @@ QtNFCReaderGUI::QtNFCReaderGUI(QWidget* parent)
     this->manager = new NFCManager(this);
     ui.setupUi(this);
     this->setScreen(CONNECT);
+    this->setStatus("Welcome to NFCReader - GUI !");
+    this->updateUI();
 }
 
 
@@ -17,19 +19,26 @@ QtNFCReaderGUI::QtNFCReaderGUI(QWidget* parent)
 void QtNFCReaderGUI::on_save_clicked()
 {
     if (this->manager->save(this->ui.first_name->text().toStdString(), this->ui.last_name->text().toStdString()))
+    {
         this->showAlertDialog("Saved", "Saved successfully");
+        this->setStatus("Data saved to NFC tag");
+        this->ui.sync_checkbox->setChecked(true);
+    }
     else
-        this->showErrorDialog("Error", "Cannot save data to card");
+        this->showErrorDialog("Error", "Cannot save data to NFC tag");
 }
 
 // called when the 'load' button is clicked
 void QtNFCReaderGUI::on_load_clicked()
 {
     this->setScreen(LOADING);
-    if (this->manager->load())
+    if (this->manager->load()) {
         this->updateUI();
+        this->setStatus("Data loaded from NFC tag");
+        this->ui.sync_checkbox->setChecked(true);
+    }
     else
-        this->showErrorDialog("Error", "Cannot load data from card");
+        this->showErrorDialog("Error", "Cannot load data from tag");
     this->setScreen(DATA);
 }
 
@@ -37,8 +46,10 @@ void QtNFCReaderGUI::on_load_clicked()
 void QtNFCReaderGUI::on_increment_clicked()
 {
     this->setScreen(LOADING);
-    if (this->manager->increment(this->ui.step_value->value()))
+    if (this->manager->increment(this->ui.step_value->value())) {
         this->updateUI();
+        this->setStatus("Counter incremented");
+    }
     else
         this->showErrorDialog("Error", "Cannot increment counter value");
     this->setScreen(DATA);
@@ -49,7 +60,10 @@ void QtNFCReaderGUI::on_decrement_clicked()
 {
     this->setScreen(LOADING);
     if (this->manager->decrement(this->ui.step_value->value()))
+    {
         this->updateUI();
+        this->setStatus("Counter decremented");
+    }
     else
         this->showErrorDialog("Error", "Cannot increment counter value");
     this->setScreen(DATA);
@@ -63,6 +77,7 @@ void QtNFCReaderGUI::on_connect_clicked()
     {
         this->on_load_clicked();
         this->setScreen(DATA);
+        this->setStatus("Connected to NFC reader");
     }
     else
     {
@@ -110,6 +125,15 @@ void QtNFCReaderGUI::updateUI()
     this->ui.first_name->setText(QString::fromStdString(this->manager->getFirstName()));
     this->ui.last_name->setText(QString::fromStdString(this->manager->getLastName()));
     this->ui.counter_value->setText(QString::fromStdString(this->manager->getCounterValue()));
+    this->ui.connected_checkbox->setChecked(this->manager->isConnected());
+}
+
+
+
+// set the status text
+void QtNFCReaderGUI::setStatus(std::string text)
+{
+    this->ui.status_text->setText(QString::fromStdString(text));
 }
 
 
@@ -126,4 +150,16 @@ void QtNFCReaderGUI::showAlertDialog(std::string title, std::string msg)
 {
     QMessageBox box;
     box.information(this, QString::fromStdString(title), QString::fromStdString(msg), QMessageBox::StandardButton::Close);
+}
+
+
+
+
+void QtNFCReaderGUI::on_first_name_textEdited()
+{
+    this->ui.sync_checkbox->setChecked(false);
+}
+void QtNFCReaderGUI::on_last_name_textEdited()
+{
+    this->ui.sync_checkbox->setChecked(false);
 }

@@ -1032,19 +1032,112 @@ QCheckBox {
     <property name="title">
      <string>Status</string>
     </property>
-    <widget class="QCheckBox" name="checkBox">
+    <widget class="QCheckBox" name="connected_checkbox">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>10</x>
        <y>40</y>
-       <width>131</width>
+       <width>141</width>
        <height>20</height>
       </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QCheckBox::indicator {
+	background: transparent;
+	border: none;
+	border-radius: 8px;
+}
+
+QCheckBox::indicator:checked {
+	background: green;
+}
+
+QCheckBox::indicator:unchecked {
+	background: red;
+}</string>
      </property>
      <property name="text">
       <string>Connected</string>
      </property>
      <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_9">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>110</y>
+       <width>61</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font-weight: bold;</string>
+     </property>
+     <property name="text">
+      <string>Status :</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="status_text">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>130</y>
+       <width>141</width>
+       <height>171</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>default text, use setText(&quot;text&quot;) to change this !</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="sync_checkbox">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>70</y>
+       <width>141</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QCheckBox::indicator {
+	background: transparent;
+	border: none;
+	border-radius: 8px;
+}
+
+QCheckBox::indicator:checked {
+	background: green;
+}
+
+QCheckBox::indicator:unchecked {
+	background: red;
+}</string>
+     </property>
+     <property name="text">
+      <string>Synced with tag</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
       <bool>false</bool>
      </property>
     </widget>
@@ -1065,7 +1158,7 @@ font-size: 24px;
 </string>
     </property>
     <property name="text">
-     <string>Qt NFCReader - GUI</string>
+     <string>NFCReader - GUI</string>
     </property>
    </widget>
    <widget class="QGroupBox" name="groupBox">
@@ -1095,7 +1188,7 @@ font-size: 24px;
      <property name="text">
       <string>Developped by Clément BALLOT
 
-Version 1.0</string>
+Version 1.1</string>
      </property>
      <property name="scaledContents">
       <bool>false</bool>
