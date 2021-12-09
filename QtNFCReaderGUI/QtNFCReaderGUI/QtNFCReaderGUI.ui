@@ -479,6 +479,22 @@ QGroupBox::title {
 
 
 
+QCheckBox::indicator {
+	background: transparent;
+	border: none;
+	border-radius: 4px;
+}
+
+QCheckBox::indicator:checked {
+	background: green;
+}
+
+QCheckBox::indicator:unchecked {
+	background: red;
+}
+
+
+
 QPushButton {
 	color: white;
 	background: #3d3d3d;
@@ -1045,19 +1061,7 @@ QCheckBox {
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">QCheckBox::indicator {
-	background: transparent;
-	border: none;
-	border-radius: 8px;
-}
-
-QCheckBox::indicator:checked {
-	background: green;
-}
-
-QCheckBox::indicator:unchecked {
-	background: red;
-}</string>
+      <string notr="true"/>
      </property>
      <property name="text">
       <string>Connected</string>
@@ -1117,19 +1121,7 @@ QCheckBox::indicator:unchecked {
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">QCheckBox::indicator {
-	background: transparent;
-	border: none;
-	border-radius: 8px;
-}
-
-QCheckBox::indicator:checked {
-	background: green;
-}
-
-QCheckBox::indicator:unchecked {
-	background: red;
-}</string>
+      <string notr="true"/>
      </property>
      <property name="text">
       <string>Synced with tag</string>
